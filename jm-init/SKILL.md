@@ -31,36 +31,47 @@ The skill's `AGENTS.md` template embeds the runtime version of these rules so fu
 
 The skill follows seven phases. Phases 3, 4, 5, and 6 each end at a user confirmation gate. Do not proceed past a gate without explicit confirmation.
 
-### Phase 1 — Auto-detect (silent)
+### Phase 1 — Auto-detect (silent unless multiple HTMLs)
 
 1. Verify `./prototype/` exists at the current working directory. If not, stop and tell the user.
-2. Determine the **project name** (used for `package.json` `"name"` and `create-next-app`, NOT for a folder):
-   - Read the `<title>` tag from the most recent/canonical HTML in `./prototype/`
+2. **Pick the canonical prototype HTML.** Recursively find every `*.html` file under `./prototype/`.
+   - **0 found** → stop and tell the user no HTML was found in `./prototype/`.
+   - **1 found** → use it. Continue silently.
+   - **>1 found** → list them and ask the user which one. Do NOT auto-pick — no version-number heuristics, no "prefer subfolders" guessing. Show each path with its `<title>` tag so they're easy to tell apart:
+
+     ```
+     Multiple HTML files in ./prototype/:
+
+       1. prototype/v1/index.html         — "GA Helper — V1"
+       2. prototype/final/index.html      — "GA Helper — Final"
+
+     Which one is the canonical prototype?
+     ```
+
+     **WAIT** for the user to pick. Carry the chosen path into Phase 2.
+3. Determine the **project name** (used for `package.json` `"name"` and `create-next-app`, NOT for a folder):
+   - Read the `<title>` tag from the chosen HTML
    - Fall back to cwd's basename
    - Sanitize to kebab-case (e.g., "GA Helper" → `ga-helper`)
-3. The **project root is cwd itself**. The scaffold lands directly in cwd, alongside the existing `prototype/`. No new project folder is created — `prototype/`, `app/`, `src/`, `AGENTS.md`, and `docs/` all sit at the same level.
-4. Collision check: if cwd already contains `package.json`, `app/`, or other Next.js artifacts (indicating a previous scaffold), stop and ask the user before proceeding.
+4. The **project root is cwd itself**. The scaffold lands directly in cwd, alongside the existing `prototype/`. No new project folder is created — `prototype/`, `app/`, `src/`, `AGENTS.md`, and `docs/` all sit at the same level.
+5. Collision check: if cwd already contains `package.json`, `app/`, or other Next.js artifacts (indicating a previous scaffold), stop and ask the user before proceeding.
 
-Print a one-line summary: *"Detected prototype for `<project-name>`. Will scaffold into `<cwd>`."*
+Print a one-line summary: *"Detected prototype for `<project-name>` (using `<chosen-html-path>`). Will scaffold into `<cwd>`."*
 
 ### Phase 2 — Explore the prototype with Playwright
 
 Playwright is configured in the user's Codex environment. Use it.
 
-1. Identify the canonical entry HTML in `./prototype/`:
-   - Single HTML → use it
-   - Multiple HTMLs → prefer scoped subfolders (e.g., `v1/`) over root-level files; prefer the highest version number when versioned files coexist
-   - Only ask the user if genuinely ambiguous (multiple unrelated HTMLs with no clear precedence)
-2. Open the entry HTML with Playwright in a headless browser.
-3. Systematically explore:
+1. Open the canonical HTML chosen in Phase 1 with Playwright in a headless browser.
+2. Systematically explore:
    - Click every visible button, link, tab
    - Open every dropdown and menu
    - Trigger every modal/dialog
    - Submit every form (with mock data if needed)
    - Note every navigation that changes the visible state
    - Capture screenshots of distinct visual states for the docs/
-4. Cross-reference Playwright observations against the JSX/TSX/CSS source files for any logic not visible at runtime.
-5. Build an internal map: pages, features, components, user flows.
+3. Cross-reference Playwright observations against the JSX/TSX/CSS source files for any logic not visible at runtime.
+4. Build an internal map: pages, features, components, user flows.
 
 ### Phase 3 — Inventory check (gate 1)
 
