@@ -72,6 +72,12 @@ Playwright is configured in the user's Codex environment. Use it.
    - Capture screenshots of distinct visual states for the docs/
 3. Cross-reference Playwright observations against the JSX/TSX/CSS source files for any logic not visible at runtime.
 4. Build an internal map: pages, features, components, user flows.
+5. **Normalize before showing the inventory.** The prototype's literal contents are evidence, not spec. Clean the map before Phase 3:
+   - **Strip prototype mock data from descriptions.** Page/feature descriptions describe what the page *is*, not what mock state it currently shows. Wrong: "Run history with six past runs." Right: "Run history table." Counts, sample names, hardcoded totals, demo-mode hints — none of it goes into the inventory.
+   - **Strip prototype version markers from component names.** `V1CsvUpload` → `CsvUpload`. The scaffolded app does not inherit the prototype's version history.
+   - **One component = one bullet.** Never lump components ("App shell/sidebar/topbar") into one entry. Each becomes its own file later, so each gets its own bullet now.
+   - **Give every component a role-suffixed name** consistent with `references/naming.md`: `-table`, `-form`, `-modal`, `-panel`, `-chart`, `-editor`, `-grid`, `-sidebar`. Use the same form across the inventory — don't mix `UploadHero` (PascalCase) with `Runs history table` (sentence).
+   - **Components live in routes or in global layout.** If a component is not bound to a specific route (app shell, sidebar, topbar), label its location as `global layout`, not as a route name.
 
 ### Phase 3 — Inventory check (gate 1)
 
@@ -87,9 +93,11 @@ Output the inventory exactly in this format:
 - ...
 
 **Major components:**
-- [component name] (in [routes])
+- [component-name] (in [route], or `global layout` if not route-bound)
 - ...
 ```
+
+One component per bullet. Names use the role suffixes from `references/naming.md` (e.g., `runs-history-table`, `csv-upload-modal`, `pipeline-panel`). No prototype version markers (no `V1` prefixes).
 
 End with: **"Anything missing or wrong?"**
 
