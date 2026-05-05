@@ -79,15 +79,33 @@ Playwright is configured in the user's Codex environment. Use it.
    - **Give every component a role-suffixed name** consistent with `references/naming.md`: `-table`, `-form`, `-modal`, `-panel`, `-chart`, `-editor`, `-grid`, `-sidebar`. Use the same form across the inventory — don't mix `UploadHero` (PascalCase) with `Runs history table` (sentence).
    - **Components live in routes or in global layout.** If a component is not bound to a specific route (app shell, sidebar, topbar), label its location as `global layout`, not as a route name.
 
-### Phase 3 — Inventory check (gate 1)
+### Phase 3 — Pages and user flows (gate 1)
 
-Output the inventory exactly in this format:
+Pages and flows go first, together. Flows are the highest-altitude artifact — confirming them before features and components anchors the agent's mental model to the right architecture before any lower-level descriptions get written. Misunderstandings about how the system actually works (e.g., parallel-distribution vs. parallel-redundancy across services) surface here, not three gates later.
+
+Output exactly in this format:
 
 ```
 **Pages found:**
 - `/<route>` → [one-line description from prototype]
 - ...
 
+**Main user flows:**
+
+1. **[Flow name]**: step → step → step → outcome
+2. **[Flow name]**: step → step → step → outcome
+...
+```
+
+End with: **"Anything missing or wrong with the pages or flows?"**
+
+WAIT for confirmation. If the user corrects anything, update the internal map and re-display. Repeat until they confirm.
+
+### Phase 4 — Features and components (gate 2)
+
+With pages and flows locked in, output the feature list and the major components:
+
+```
 **Features:**
 - [feature name] — [one-line description]
 - ...
@@ -101,9 +119,9 @@ One component per bullet. Names use the role suffixes from `references/naming.md
 
 End with: **"Anything missing or wrong?"**
 
-WAIT for confirmation. If the user corrects anything, update the internal map and re-display the full inventory. Repeat until they confirm.
+WAIT for confirmation. Repeat until confirmed.
 
-### Phase 4 — Understanding check (gate 2)
+### Phase 5 — Page descriptions (gate 3)
 
 For each page in the confirmed inventory, output one paragraph describing what the page does, what's on it, and how interactions behave:
 
@@ -113,23 +131,7 @@ For each page in the confirmed inventory, output one paragraph describing what t
 
 End with: **"Any I got wrong?"**
 
-WAIT for confirmation. Update misunderstandings (these become Phase 5 source material). Repeat until confirmed.
-
-### Phase 5 — User flow check (gate 3)
-
-Output the main user flows discovered:
-
-```
-**Main user flows:**
-
-1. **[Flow name]**: step → step → step → outcome
-2. **[Flow name]**: step → step → step → outcome
-...
-```
-
-End with: **"Did I miss any flows? Any wrong?"**
-
-WAIT for confirmation.
+WAIT for confirmation. Repeat until confirmed.
 
 ### Phase 6 — Scaffold preview (gate 4 — final approval)
 
@@ -152,14 +154,14 @@ Run in this order:
 1. `scripts/scaffold.sh "<project-name>"` — handles the deterministic bootstrap (create-next-app, deps, shadcn, Drizzle, jscpd, knip, base config). Runs in cwd; the project name is used for `package.json` and create-next-app only, not for a folder.
 2. After scaffold.sh succeeds, copy `templates/AGENTS.md` to the project root as-is. The template is opinionated and project-agnostic; the user has already customized it for their stack and preferences.
 3. Generate **`docs/product.md`** by filling `templates/docs/product.md` with content from confirmed Phases 3-5:
-   - **What this app does** — 1-2 paragraphs based on Phase 3 features
-   - **Pages** — list each route with the description from Phase 4
-   - **User flows** — numbered list from Phase 5
-   - **UX decisions** — leave the format template; populate only if Phase 3-5 surfaced specific corrections worth recording (otherwise leave the "(none yet)" placeholder)
-   - **Roadmap V1** — populate from the confirmed feature breakdown
+   - **What this app does** — 1-2 paragraphs based on Phase 4 features
+   - **Pages** — list each route with the description from Phase 5
+   - **User flows** — numbered list from Phase 3
+   - **UX decisions** — leave the format template; populate only if Phases 3-5 surfaced specific corrections worth recording (otherwise leave the "(none yet)" placeholder)
+   - **Roadmap V1** — populate from the confirmed feature breakdown (Phase 4)
    - **Roadmap V2+** — leave as placeholder
 4. Generate **`docs/codebase-map.md`** by filling `templates/docs/codebase-map.md` with the actual scaffolded structure:
-   - One entry per route folder created in Step 7 below, with 1-2 sentence purpose from Phase 4
+   - One entry per route folder created in Step 7 below, with 1-2 sentence purpose from Phase 5 (page descriptions)
    - List `page.tsx`, `actions.ts` (with action names from stubs), and a one-line summary of `_components/` for each route
    - List the `src/db/` and `src/lib/` files actually created (with current schema state — likely "empty until first feature adds one")
 5. Copy `templates/docs/working-notes.md` to the project's `docs/working-notes.md` as-is. Empty append-only log.
