@@ -34,14 +34,14 @@ The skill follows seven phases. Phases 3, 4, 5, and 6 each end at a user confirm
 ### Phase 1 — Auto-detect (silent)
 
 1. Verify `./prototype/` exists at the current working directory. If not, stop and tell the user.
-2. Determine the **project name**:
+2. Determine the **project name** (used for `package.json` `"name"` and `create-next-app`, NOT for a folder):
    - Read the `<title>` tag from the most recent/canonical HTML in `./prototype/`
-   - Fall back to the parent directory's basename
+   - Fall back to cwd's basename
    - Sanitize to kebab-case (e.g., "GA Helper" → `ga-helper`)
-3. Determine **target directory**: sibling to `./prototype/` named after the project. So if cwd is `/Users/x/projects/ga-helper-workspace/`, target is `/Users/x/projects/ga-helper-workspace/ga-helper/`.
-4. If the target directory already exists and is non-empty, stop and ask the user before proceeding.
+3. The **project root is cwd itself**. The scaffold lands directly in cwd, alongside the existing `prototype/`. No new project folder is created — `prototype/`, `app/`, `src/`, `AGENTS.md`, and `docs/` all sit at the same level.
+4. Collision check: if cwd already contains `package.json`, `app/`, or other Next.js artifacts (indicating a previous scaffold), stop and ask the user before proceeding.
 
-Print a one-line summary: *"Detected prototype for `<project-name>`. Will create at `<target-dir>`."*
+Print a one-line summary: *"Detected prototype for `<project-name>`. Will scaffold into `<cwd>`."*
 
 ### Phase 2 — Explore the prototype with Playwright
 
@@ -130,7 +130,7 @@ End with: **"Proceed with scaffolding?"**
 
 Run in this order:
 
-1. `scripts/scaffold.sh "<project-name>" "<target-dir>"` — handles the deterministic bootstrap (create-next-app, deps, shadcn, Drizzle, jscpd, knip, base config)
+1. `scripts/scaffold.sh "<project-name>"` — handles the deterministic bootstrap (create-next-app, deps, shadcn, Drizzle, jscpd, knip, base config). Runs in cwd; the project name is used for `package.json` and create-next-app only, not for a folder.
 2. After scaffold.sh succeeds, copy `templates/AGENTS.md` to the project root as-is. The template is opinionated and project-agnostic; the user has already customized it for their stack and preferences.
 3. Generate **`docs/product.md`** by filling `templates/docs/product.md` with content from confirmed Phases 3-5:
    - **What this app does** — 1-2 paragraphs based on Phase 3 features
@@ -154,13 +154,12 @@ Run in this order:
 10. Print next steps:
 
 ```
-✓ Project scaffolded at <target-dir>
+✓ Project scaffolded in <cwd>
 ✓ Initial commit made
 
 Next steps:
-  cd <target-dir>
   pnpm dev                          # verify it runs
-  
+
   Then prompt your agents to start building features:
     "Implement the upload-csv feature in app/<route>/. The page stub
     is in place. Wire up the action and the components."

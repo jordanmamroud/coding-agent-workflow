@@ -143,7 +143,7 @@ Bootstraps a new Next.js project from a `./prototype/` folder. Uses Playwright t
 
 **Workflow: 7 phases, 4 user gates.**
 
-1. **Auto-detect** — find prototype, derive project name from HTML `<title>` or parent folder name, target directory is sibling to `prototype/` (silent)
+1. **Auto-detect** — find prototype, derive project name from HTML `<title>` or cwd basename, scaffold into cwd (cwd IS the project root; prototype/ stays as a sibling of app/, src/) (silent)
 2. **Explore prototype with Playwright** — clicks every interaction, navigates every link, captures states (silent + progress)
 3. **Inventory check (gate 1)** — show pages/features/components found → user confirms or corrects
 4. **Understanding check (gate 2)** — one-line description per page → user confirms or corrects
@@ -154,7 +154,7 @@ Bootstraps a new Next.js project from a `./prototype/` folder. Uses Playwright t
 **Key principle:** the skill drives, the user corrects. Confirmation-driven, not gap-question-driven. We landed on this after the user pushed back on an earlier "ask 10 UX questions" design.
 
 **Outputs at scaffold time:**
-- New Next.js project at `../<project-name>/`
+- Current folder is now the Next.js project root, with `prototype/` as a sibling of `app/` and `src/`
 - `AGENTS.md` at project root
 - `docs/product.md` (populated from Phases 3-5)
 - `docs/codebase-map.md` (populated from scaffolded structure)
@@ -409,7 +409,7 @@ Less urgent because we spent more time on this one already. But worth one final 
 
 After 1 and 2, the user wants to start using the skills on a real project. The plan:
 
-- Create a workspace, drop a real prototype in
+- Create a project folder, drop a real prototype in
 - Invoke `jm-init`
 - Walk through the gates
 - Use the scaffolded project for actual work

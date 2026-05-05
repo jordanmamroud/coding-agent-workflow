@@ -40,10 +40,10 @@ This repo is my opinionated answer to those failures:
 Bootstraps a new Next.js project from a `./prototype/` folder.
 
 **Inputs:**
-- A `prototype/` folder at the workspace root (HTML, JSX, CSS — usually built with Claude Design or similar)
+- A folder containing `./prototype/` (HTML, JSX, CSS — usually built with Claude Design or similar). The skill scaffolds *into* that folder; it doesn't create a new one.
 
 **Outputs:**
-- A new Next.js project at `../<project-name>/` (sibling to `prototype/`)
+- The current folder becomes the Next.js project. `prototype/` stays put as a sibling of `app/`, `src/`, `AGENTS.md`, and `docs/`.
 - Fully configured: TypeScript, Tailwind, shadcn/ui, SQLite + Drizzle, Vitest, jscpd, knip
 - `AGENTS.md` at project root
 - `docs/` folder with `product.md`, `codebase-map.md`, `working-notes.md`
@@ -52,7 +52,7 @@ Bootstraps a new Next.js project from a `./prototype/` folder.
 
 **Workflow:** 7 phases, 4 user gates.
 
-1. **Auto-detect** — find prototype, derive project name, target directory (silent)
+1. **Auto-detect** — find `./prototype/`, derive project name from HTML `<title>` or cwd basename, scaffold target = cwd (silent)
 2. **Explore prototype with Playwright** — click through every interaction, capture states (silent + progress)
 3. **Inventory check (gate 1)** — show pages/features/components found, confirm
 4. **Understanding check (gate 2)** — show one-line description per page, confirm
@@ -235,11 +235,11 @@ Each skill is a self-contained folder with a SKILL.md that Codex reads. The `des
 
 ### Initializing a new project
 
-1. Create a workspace folder.
+1. Create a project folder (this folder will become the Next.js project root).
 2. Drop your prototype in as `./prototype/` (HTML/JSX/CSS).
-3. From the workspace root, invoke Codex CLI: *"use the jm-init skill"* or just *"scaffold this prototype"*.
+3. From that folder, invoke Codex CLI: *"use the jm-init skill"* or just *"scaffold this prototype"*.
 4. Walk through the 4 confirmation gates. Skill scaffolds, generates docs/, makes initial commit.
-5. The new project lives at `../<project-name>/` (sibling to `prototype/`).
+5. The folder is now the Next.js project. `prototype/` sits next to `app/`, `src/`, `AGENTS.md`, and `docs/`.
 
 ### Working with the project
 

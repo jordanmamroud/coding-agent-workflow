@@ -1,11 +1,15 @@
 #!/usr/bin/env bash
 # scaffold.sh — bootstrap a Next.js project with the deferred-promotion architecture
 #
+# Runs in cwd. cwd IS the project root: prototype/, app/, src/, AGENTS.md, and
+# docs/ all sit at the same level. No new project folder is created.
+#
 # Usage:
-#   scaffold.sh <project-name> <target-dir>
+#   scaffold.sh <project-name>
 #
 # Example:
-#   scaffold.sh ga-helper /Users/x/projects/ga-helper-workspace/ga-helper
+#   cd ~/projects/test3            # cwd already contains ./prototype/
+#   scaffold.sh ga-helper          # scaffolds Next.js into ~/projects/test3
 #
 # What it does (deterministic parts only — agent handles content generation):
 #   1. Runs create-next-app with the fixed stack (Next.js, TS, Tailwind, App Router)
@@ -20,10 +24,9 @@
 set -euo pipefail
 
 PROJECT_NAME="${1:-}"
-TARGET_DIR="${2:-}"
 
-if [ -z "$PROJECT_NAME" ] || [ -z "$TARGET_DIR" ]; then
-  echo "Usage: scaffold.sh <project-name> <target-dir>" >&2
+if [ -z "$PROJECT_NAME" ]; then
+  echo "Usage: scaffold.sh <project-name>" >&2
   exit 1
 fi
 
@@ -34,14 +37,31 @@ if ! command -v pnpm &>/dev/null; then
   exit 1
 fi
 
-PARENT_DIR="$(dirname "$TARGET_DIR")"
-mkdir -p "$PARENT_DIR"
-cd "$PARENT_DIR"
+# Confirm prototype/ exists (skill checks this too — belt-and-braces)
+if [ ! -d "./prototype" ]; then
+  echo "❌ ./prototype not found in $(pwd)" >&2
+  echo "   scaffold.sh must run in the directory containing prototype/" >&2
+  exit 1
+fi
 
-echo "→ Creating Next.js app at $TARGET_DIR"
+# Refuse to overwrite an existing scaffold
+if [ -f "package.json" ] || [ -d "app" ]; then
+  echo "❌ Refusing to scaffold: package.json or app/ already exists in $(pwd)" >&2
+  exit 1
+fi
 
-# 1. Run create-next-app with our fixed stack
-#    --no-src-dir keeps app/ at root so we can have src/ for shared infra
+# Refuse if the temp scaffold name collides with something on disk
+if [ -e "$PROJECT_NAME" ]; then
+  echo "❌ Refusing to scaffold: $(pwd)/$PROJECT_NAME already exists" >&2
+  exit 1
+fi
+
+echo "→ Creating Next.js app in $(pwd) (project name: $PROJECT_NAME)"
+
+# 1. Run create-next-app into a temp subfolder, then flatten it into cwd.
+#    create-next-app refuses non-empty target dirs (cwd has prototype/), so we
+#    scaffold into <project-name>/ first and move files up afterward.
+#    --no-src-dir keeps app/ at root so we can have src/ for shared infra.
 pnpm create next-app@latest "$PROJECT_NAME" \
   --typescript \
   --tailwind \
@@ -53,7 +73,11 @@ pnpm create next-app@latest "$PROJECT_NAME" \
   --turbopack \
   --skip-install
 
-cd "$PROJECT_NAME"
+# Move scaffolded contents up alongside prototype/, then remove the empty shell
+shopt -s dotglob
+mv "$PROJECT_NAME"/* .
+shopt -u dotglob
+rmdir "$PROJECT_NAME"
 
 echo "→ Installing dependencies"
 pnpm install
@@ -250,7 +274,7 @@ if [ ! -d ".git" ]; then
 fi
 
 echo ""
-echo "✓ Scaffold complete at $TARGET_DIR"
+echo "✓ Scaffold complete in $(pwd)"
 echo ""
 echo "Deterministic setup done. Now the agent will:"
 echo "  - Generate AGENTS.md from the template"
