@@ -1,0 +1,28 @@
+11. Priority 1 (in progress) — Tighten prototype-override → product.md flow
+
+Diagnosis confirmed: the root issue is a missing relationship statement between product.md and the working-notes Prototype overrides section. Mapping and authority problems both follow from it. Status semantics is wording-level; drift is intrinsic to append-only and accepted.
+
+Fix lives in two places:
+  a) AGENTS.md gets the relationship rule (placement: fold into Critical rules' "match the prototype" rule, currently line 17, replacing/extending the parenthetical about overrides).
+  b) Working-notes Prototype overrides template gets a pointer-back field so each entry says where it landed in product.md (section + entry title at minimum).
+
+Draft wording for the AGENTS.md rule (3 sentences, ~50 words, agreed direction but not yet committed):
+
+  `docs/product.md` states current product behavior; treat it as canonical. The Prototype overrides section in `docs/working-notes.md` is a log of intentional divergences, kept as a warning against re-aligning the implementation to the prototype — it does not qualify or modify product.md. On apparent conflict, product.md wins.
+
+Open when we resume:
+  - Confirm/refine the wording above
+  - Decide exact placement in AGENTS.md (Critical rules vs. "Other docs to read on demand" intro)
+  - Design the pointer-back field for the override template (format, who fills it, what to do at handoff in jm-checkpoint)
+  - Mirror any working-notes template change to jm-checkpoint/templates/working-notes.md
+
+Reference: full scenario walkthrough and 4-failure-mode characterization is in this chat — Mapping, Authority, Status semantics, Drift.
+
+---
+
+10. Optional but recommended: auto-commit-on-checkpoint workflow
+When you run jm-checkpoint from inside this repo, the skill won't auto-commit (we explicitly designed it to leave commits to you). After a checkpoint, get in the habit of:
+bashgit diff                    # review what changed
+git add docs/
+git commit -m "Checkpoint: <brief summary>"
+git push                    # only when you've reached a clean point
