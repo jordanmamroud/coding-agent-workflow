@@ -1,4 +1,7 @@
 # Project: Coding Agent Workflow
+## Critical Rules
+- Start every response with "CLAUDE.md hi from documents/github/coding-agent-workflow"
+
 
 ## Your role
 

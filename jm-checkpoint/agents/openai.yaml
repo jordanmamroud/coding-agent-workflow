@@ -1,0 +1,8 @@
+interface:
+  display_name: "JM Checkpoint"
+  short_description: "Propose durable and active session memory updates"
+  default_prompt: "Use $jm-checkpoint to propose memory updates"
+
+policy:
+  allow_implicit_invocation: false
+

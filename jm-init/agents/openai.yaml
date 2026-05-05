@@ -1,0 +1,7 @@
+interface:
+  display_name: "JM-init"
+  short_description: "Personal init workflow scaffold assuming prototype."
+  default_prompt: "Use $jm-init to run my personal init workflow."
+
+policy:
+  allow_implicit_invocation: false

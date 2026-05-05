@@ -1,6 +1,6 @@
 ---
 name: jm-checkpoint
-description: Push session knowledge into docs/working-notes.md and produce a next-action prompt. Use this skill anytime the user says "checkpoint", "save what we learned", "do a checkpoint", "let's hand off", "wrap up the session", "I'm stopping here", or anytime knowledge accumulated in the session should be preserved before context is lost. Works in three modes — continuing the same session (mid-stream save), natural break (handoff at a clean stopping point), or mid-task break (handoff when context is full but task is unfinished). Always produces a paste-ready prompt for the next action regardless of mode.
+description: Push session knowledge into docs/working-notes.md and produce a next-action prompt. Use only when the user explicitly invokes `/jm-checkpoint` or `$jm-checkpoint`.  Works in three modes — continuing the same session (mid-stream save), natural break (handoff at a clean stopping point), or mid-task break (handoff when context is full but task is unfinished). Always produces a paste-ready prompt for the next action regardless of mode.Use only when the user explicitly invokes `/jm-checkpoint` or `$jm-checkpoint` 
 ---
 
 # Session Checkpoint
