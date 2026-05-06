@@ -108,10 +108,21 @@ I've tested individual pieces of this setup (e.g., MD context costs are ~7% for 
 
 ## Git workflow
 
-- Make changes, then I'll review with `git diff`.
-- Commit with descriptive messages.
-- Push only when I say so — not automatically after every change.
-- Atomic commits: each commit should touch only the files for one logical change. No "while you're at it" edits.
+When making changes:
+- Group edits by file. For each file, show me ALL the edits you plan to make to that file before applying any of them.
+- Show edits as proposed before/after, or a clear description of what's changing where. Don't apply yet.
+- Wait for my approval on the file's full set of edits, or my corrections.
+- After approval, apply all approved edits to that file at once.
+- Move to the next file in the same batch without asking permission to continue.
+
+When all files in a logical change are done:
+- Show me the proposed commit message before committing.
+- Wait for my approval (or correction) on the message.
+- After approval, commit, then push to origin automatically.
+
+Atomic commits: each commit touches only the files for one logical change. If multiple unrelated issues are queued, treat each as its own batch → its own commit → its own push.
+
+Slow is fine. These are markdown files, not production code. Take the time to get edits and commit messages right rather than batching for speed.
 
 ## File map
 
