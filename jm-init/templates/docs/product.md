@@ -43,6 +43,23 @@ _(none yet)_
 
 ---
 
+## Divergences from prototype
+
+Places where the implementation deliberately diverges from `prototype/v1/`. **Read this before flagging or "fixing" a prototype divergence** — some are intentional product decisions.
+
+**Format:**
+
+```
+### [Feature/area]
+- **Prototype shows:** what's in `prototype/v1/`
+- **We built:** what's in the real app
+- **Why:** product or technical reason
+```
+
+_(none yet)_
+
+---
+
 ## Roadmap
 
 ### V1 — current scope

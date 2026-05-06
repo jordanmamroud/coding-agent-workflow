@@ -81,28 +81,6 @@ _(none yet)_
 
 ---
 
-## Prototype overrides
-
-Places where the Next.js implementation **deliberately diverges** from `prototype/v1/`.
-
-**⚠️ Read this section before declaring a feature "matches the prototype" or attempting to "fix" a divergence.** Some divergences are intentional product decisions and must not be reverted.
-
-This section also feeds **product.md updates at handoff time**. At a session handoff, the checkpoint skill reviews unresolved entries and asks whether they should be reflected in `product.md`. Resolved entries stay here (warning function) but get marked accordingly.
-
-**Format:**
-
-```
-### [YYYY-MM-DD] — [Feature/area]
-- **Prototype shows:** what's in `prototype/v1/`
-- **We built:** what's in the real app
-- **Why:** product or technical reason
-- **Status:** Pending review / Resolved in product.md / Override only (cosmetic)
-```
-
-_(none yet)_
-
----
-
 ## AGENTS.md candidates
 
 Proposed additions to `AGENTS.md` captured during work. **Do not edit `AGENTS.md` mid-session** — capture the proposal here and resolve at handoff.

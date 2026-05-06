@@ -14,7 +14,8 @@ Treat `prototype/v1/` as the source of truth for UI, layout, interactions, and c
 - **HALT on missing dependencies.** Identify external dependencies (API keys, credentials, permissions) before starting. If anything is missing, stop and ask. Do not work around it.
 - **File paths:** always use relative paths when putting them in a response. Never respond to me with a absolute path or put them in memory docs. 
 - **Persist raw external responses to disk before processing.** REST APIs, MCP servers, webhooks — write the raw response to disk before parsing or transforming.
-- After completing any feature, verify the Next.js implementation matches the prototype: visual design, component structure, user flows, and edge-case states (loading, empty, error). Match the UI/UX, not the data layer. Before flagging or "fixing" a divergence, check `docs/working-notes.md` (Prototype overrides) — some divergences are intentional.
+- After completing any feature, verify the Next.js implementation matches the prototype: visual design, component structure, user flows, and edge-case states (loading, empty, error). Match the UI/UX, not the data layer. **The implementation should match the prototype except where `docs/product.md` (Divergences from prototype section) lists an intentional difference** — check there before flagging or "fixing" anything that looks off.
+- **Prototype divergences go in product.md, not chat.** When you intentionally diverge from `prototype/v1/`, append an entry to `docs/product.md` (Divergences from prototype section) inline as you work — no mid-task gate. At end of task, list the entries you added so the user can review, edit, or remove. Never leave a divergence undocumented.
 
 
 ### Forbidden workarounds (illustrative, not exhaustive)
@@ -183,7 +184,7 @@ A task is done when:
 - You have built the necessary UI components (can be a minimal, unstyled button or raw JSON dump) just enough so the backend logic can be tested visually.
 - The agent has actively exercised and verified the task in the running UI using a browser tool.
 - The agent has verified the terminal logs are clear of hidden errors.
-- After completing any feature, verify the Next.js implementation matches the prototype: visual design, component structure, user flows, and edge-case states (loading, empty, error). Match the UI/UX, not the data layer. Check `docs/working-notes.md` (Prototype overrides) before flagging a divergence — some are intentional.
+- After completing any feature, verify the Next.js implementation matches the prototype: visual design, component structure, user flows, and edge-case states (loading, empty, error). Match the UI/UX, not the data layer. **The implementation should match the prototype except where `docs/product.md` (Divergences from prototype section) lists an intentional difference** — check there before flagging or "fixing" anything that looks off.
  
 
 Do not declare a task done from code inspection alone.
@@ -192,5 +193,5 @@ Do not declare a task done from code inspection alone.
 
 - `docs/codebase-map.md` — read at the start of any non-trivial task to know where code lives. Update when you add a new route or significant `_lib/` file.
 - `docs/product.md` — read when starting work on a feature, or before changing UX in an area that's been decided. Add UX decisions here when you make non-obvious ones.
-- `docs/working-notes.md` — known bugs, dead ends, gotchas, decisions, and prototype overrides. Read the relevant section by trigger; **write back new entries when you discover something**. Always check Prototype overrides before flagging a prototype divergence.
+- `docs/working-notes.md` — known bugs, dead ends, gotchas, and decisions. Read the relevant section by trigger; **write back new entries when you discover something**.
 - `prototype/v1/` — already covered in Project context; reference for visual/layout details

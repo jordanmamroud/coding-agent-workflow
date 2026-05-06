@@ -158,6 +158,7 @@ Run in this order:
    - **Pages** — list each route with the description from Phase 5
    - **User flows** — numbered list from Phase 3
    - **UX decisions** — leave the format template; populate only if Phases 3-5 surfaced specific corrections worth recording (otherwise leave the "(none yet)" placeholder)
+   - **Divergences from prototype** — leave the "(none yet)" placeholder. Divergences accumulate during real implementation work; the init phase has none.
    - **Roadmap V1** — populate from the confirmed feature breakdown (Phase 4)
    - **Roadmap V2+** — leave as placeholder
 4. Generate **`docs/codebase-map.md`** by filling `templates/docs/codebase-map.md` with the actual scaffolded structure:

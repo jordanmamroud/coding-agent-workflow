@@ -39,14 +39,13 @@ The mode determines depth of capture (Phase 2) and whether `handoff.md` is writt
 
 ### Phase 2 — Working-notes draft review (gate)
 
-Review the session conversation. Identify items worth logging across the six sections of `docs/working-notes.md`:
+Review the session conversation. Identify items worth logging across the five sections of `docs/working-notes.md`:
 
 1. **Known bugs** — bugs encountered and not yet fixed, or fixed but flag-worthy
 2. **Dead ends** — approaches tried that failed (with root cause)
 3. **Gotchas** — library/API/infrastructure quirks discovered the hard way
 4. **Decisions** — non-obvious technical or product choices made (including tech debt acknowledgments)
-5. **Prototype overrides** — deliberate divergences from `prototype/v1/`
-6. **AGENTS.md candidates** — rules, preferences, or counterintuitive behaviors that surfaced during the session and should be considered for `AGENTS.md` at handoff time
+5. **AGENTS.md candidates** — rules, preferences, or counterintuitive behaviors that surfaced during the session and should be considered for `AGENTS.md` at handoff time
 
 Examples of what triggers a #6 entry:
 - User says "don't do X" or "always do Y"
@@ -76,9 +75,6 @@ Display the drafts grouped by section:
 
 ### Decisions
 - [draft entry]
-
-### Prototype overrides
-- [draft entry]
 ```
 
 End with: **"Approve all / edit specific entries / skip individual ones?"**
@@ -86,6 +82,36 @@ End with: **"Approve all / edit specific entries / skip individual ones?"**
 WAIT for confirmation. Apply edits and removals as instructed. Repeat until approved.
 
 If a section has no candidate entries, omit that section entirely from the display.
+
+### Phase 2.5 — Divergence sweep (all modes, gate per entry)
+
+Review the session conversation for prototype divergences — places where the implementation deliberately differs from `prototype/v1/` (different layout, behavior, copy, structure, etc.).
+
+Sources to scan:
+- Anything the agent or user framed as "we're doing X instead of what the prototype shows"
+- Inline entries the agent already appended to `docs/product.md` (Divergences from prototype section) during work — verify they're listed here so the user can review them at this gate
+- New deliberate-difference observations the agent didn't write inline
+
+If there are no candidates, skip this phase silently.
+
+For each candidate, present:
+
+**Divergence [N of M]:** [Feature/area]
+
+**Prototype shows:** [from session]
+**We built:** [from session]
+**Why:** [product or technical reason from session]
+
+About to append this to `docs/product.md` (Divergences from prototype section). Approve / edit / reject?
+
+- **Approve** → append to `docs/product.md`. If already inline-appended during work, this is a no-op (user is confirming the existing entry).
+- **Edit** → user provides revised text. Show the revision and re-ask.
+- **Reject** → if not yet written, drop. If already inline-appended, the user removes it manually (the skill does not modify product.md outside of approved appends).
+
+Hard rules:
+- Append-only to `product.md`. Per-entry approval.
+- Show the EXACT text that will be appended.
+- This phase runs in all three modes — divergences accumulate across sessions and the sweep is the failsafe against losing them.
 
 ### Phase 3 — Next-action prompt + (for handoff modes) handoff.md draft (gate)
 
@@ -180,13 +206,9 @@ End with: **"Approve / edit / regenerate?"**
 
 WAIT for confirmation.
 
-### Phase 3.5 — Resolve candidates (handoff modes b/c only)
+### Phase 3.5 — Resolve AGENTS.md candidates (handoff modes b/c only)
 
-This phase runs ONLY for modes (b) and (c). Mode (a) skips this phase entirely — mid-session checkpoints never modify `AGENTS.md` or `product.md`.
-
-The phase has two independent sub-flows. Run both if both have candidates; skip either if its source section is empty.
-
-#### 3.5a — AGENTS.md candidates → AGENTS.md
+This phase runs ONLY for modes (b) and (c). Mode (a) skips it — mid-session checkpoints never modify `AGENTS.md`.
 
 If `docs/working-notes.md` → AGENTS.md candidates section has any entries with `Status: Pending`:
 
@@ -212,62 +234,21 @@ Hard rules:
 - Per-entry approval. Even if user says "approve all", confirm each individually.
 - Show the EXACT text that will be appended before writing.
 
-#### 3.5b — Prototype overrides → product.md
-
-If `docs/working-notes.md` → Prototype overrides section has any entries with `Status: Pending review`:
-
-For each pending entry, present:
-
-```
-**Override [N of M]**: [Date] — [Feature/area]
-
-**Prototype shows:** [from working-notes]
-**We built:** [from working-notes]
-**Why:** [from working-notes]
-
-This is a deliberate divergence from the prototype. Should it be reflected in product.md?
-
-Options:
-  - Yes, update product.md → Pages
-  - Yes, update product.md → User flows
-  - Yes, update product.md → UX decisions
-  - Yes, update product.md → Roadmap
-  - No, this is cosmetic/stylistic only (mark "Override only")
-  - Defer — review at next handoff
-```
-
-If user picks a "Yes" option, the skill drafts the product.md addition based on the override entry, shows it, asks "approve this text?", and on approval:
-
-- Appends approved text to the named section of `product.md`
-- Marks the working-notes entry `Status: Resolved in product.md`
-
-If user picks "No": mark entry `Status: Override only (cosmetic)`.
-
-If user picks "Defer": leave entry as `Status: Pending review`.
-
-The override entry is NEVER deleted from working-notes after resolution. It still serves as a warning to agents who read `prototype/v1/` directly and might try to "fix" the divergence.
-
-Hard rules:
-- Append-only to `product.md`. Never remove or modify existing content.
-- Per-entry approval.
-- Show the EXACT text that will be appended.
-- Override entry stays in working-notes after resolution (status updated, not deleted).
-
 ### Phase 4 — Execute (silent except for status)
 
 Run in this order:
 
 1. Append approved entries to `docs/working-notes.md` under their respective sections. Append-only — never modify or remove existing entries.
-2. **Update status fields** in working-notes entries that were resolved during Phase 3.5 (AGENTS.md candidates → Resolved; Prototype overrides → Resolved in product.md / Override only / Rejected).
-3. If Phase 3.5a approved any entries: append text to `AGENTS.md` in the specified sections.
-4. If Phase 3.5b approved any entries: append text to `product.md` in the specified sections.
+2. **Update status fields** in working-notes AGENTS.md candidate entries that were resolved during Phase 3.5.
+3. If Phase 2.5 approved any entries: append text to `docs/product.md` (Divergences from prototype section).
+4. If Phase 3.5 approved any entries: append text to `AGENTS.md` in the specified sections.
 5. If mode is (b) or (c): write/overwrite `docs/handoff.md` with the approved content.
 6. Print summary:
 
 ```
 ✓ Updated docs/working-notes.md (N entries added)
-✓ [Updated AGENTS.md (N rules added)] (only if Phase 3.5a wrote)
-✓ [Updated product.md (N entries added)] (only if Phase 3.5b wrote)
+✓ [Updated docs/product.md (N divergences added)] (only if Phase 2.5 wrote)
+✓ [Updated AGENTS.md (N rules added)] (only if Phase 3.5 wrote)
 ✓ [Wrote docs/handoff.md] (modes b/c only)
 
 Next prompt (for easy copying):
@@ -281,11 +262,11 @@ The prompt is ALWAYS printed in chat at the end, regardless of mode. User decide
 
 ## Hard rules during this skill
 
-- **Never modify existing working-notes entries.** Append-only. The only exception is updating the `Status` field on AGENTS.md candidates and Prototype overrides during Phase 3.5 resolution. Otherwise, if an entry needs correction, the user does that manually.
-- **Never write to working-notes, handoff.md, AGENTS.md, or product.md without user approval.** Phases 2, 3, 3.5a, and 3.5b are all approval gates. No silent writes.
-- **Append-only to AGENTS.md and product.md.** Never remove or modify existing rules or content. Phase 3.5 only adds.
-- **Per-entry approval in Phase 3.5.** Even if user says "approve all", confirm each candidate individually with the exact text shown.
-- **Mode (a) never modifies AGENTS.md or product.md.** Only Phases 1-2 and the Phase 3 prompt run. Phase 3.5 is skipped entirely.
+- **Never modify existing working-notes entries.** Append-only. The only exception is updating the `Status` field on AGENTS.md candidates during Phase 3.5 resolution. Otherwise, if an entry needs correction, the user does that manually.
+- **Never write to working-notes, handoff.md, AGENTS.md, or product.md without user approval.** Phases 2, 2.5, 3, and 3.5 are all approval gates. No silent writes.
+- **Append-only to AGENTS.md and product.md.** Never remove or modify existing rules or content. The skill only adds.
+- **Per-entry approval in Phases 2.5 and 3.5.** Even if user says "approve all", confirm each candidate individually with the exact text shown.
+- **Mode (a) never modifies AGENTS.md.** It may modify `docs/product.md` via the Phase 2.5 divergence sweep. Phase 3.5 is skipped entirely in mode (a).
 - **If `docs/working-notes.md` doesn't exist, create it** from `templates/working-notes.md` before appending.
 - **Never invent entries that didn't actually happen in the session.** Only log things that demonstrably occurred. If unsure whether something is worth logging, include it as a draft and let the user remove it.
 - **Don't over-log.** Routine work doesn't need entries. The bar for inclusion: would a future agent benefit from knowing this? If marginal, skip.
@@ -294,8 +275,8 @@ The prompt is ALWAYS printed in chat at the end, regardless of mode. User decide
 ## What this skill does NOT do
 
 - Does not modify code or run code.
-- Does not create or modify files outside `docs/working-notes.md`, `docs/handoff.md`, `AGENTS.md`, and `docs/product.md` (and AGENTS.md / product.md only during Phase 3.5 with explicit per-entry approval).
-- Does not modify `prototype/v1/`. Ever. The prototype is a frozen design spec; divergences are tracked via Prototype overrides in working-notes, then optionally reflected in product.md.
+- Does not create or modify files outside `docs/working-notes.md`, `docs/handoff.md`, `AGENTS.md`, and `docs/product.md` (with explicit per-entry approval for AGENTS.md and product.md).
+- Does not modify `prototype/v1/`. Ever. The prototype is a frozen design spec; divergences are tracked directly in `docs/product.md` (Divergences from prototype section).
 - Does not commit to git. The user commits when they're ready.
 - Does not push tasks to an external tracker. If you have one, that's a separate workflow.
 - Does not produce milestone artifacts (README, CHANGELOG). For V1-done or larger milestones, prompt for those separately.

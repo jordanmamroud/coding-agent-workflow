@@ -66,8 +66,8 @@ When working on the skills here, this is the architecture they enforce on scaffo
 ## Hard constraints baked into the skills
 
 - Skills never modify `prototype/v1/` in scaffolded projects — it's a frozen design spec
-- AGENTS.md and product.md in scaffolded projects are append-only (per-entry approval)
-- jm-checkpoint mode (a) never modifies AGENTS.md or product.md
+- AGENTS.md and product.md in scaffolded projects are append-only. Per-entry approval, except for prototype divergences — agents append those to product.md inline during work and list them at end-of-task for post-hoc review.
+- jm-checkpoint mode (a) never modifies AGENTS.md. It may modify product.md via the Phase 2.5 divergence sweep.
 - Agents never promote code on their own — only on user-initiated refactor day
 - No `src/features/`, `src/components/`, `src/hooks/`, `src/utils/`, `src/services/`, or `src/types/` folders. Ever.
 
@@ -147,8 +147,6 @@ When starting a new chat, read SESSION-NOTES.md first. Read other files when rel
 
 The skills are committed but never used on a real project yet. Priority order:
 
-1. **Tighten the prototype-override → product.md flow** so an agent reading both files in a future session doesn't get confused. The override entry stays after resolution (warning function), but the relationship between override entry and product.md content needs to be clear without re-asking.
+1. **Final review pass on the AGENTS.md candidates → AGENTS.md resolution flow.** Lower priority since we spent more time on it already.
 
-2. **Final review pass on the AGENTS.md candidates → AGENTS.md resolution flow.** Lower priority since we spent more time on it already.
-
-3. **Use the skills on a real project.** Bring discovered issues back and improve the skills based on real usage. This is the primary feedback loop going forward.
+2. **Use the skills on a real project.** Bring discovered issues back and improve the skills based on real usage. This is the primary feedback loop going forward.
